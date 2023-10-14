@@ -19,25 +19,20 @@ function onContainerClick(e) {
   e.preventDefault();
 
   const isImgElement = e.target.classList.contains("gallery__image");
-
   if (!isImgElement) return;
 
   const instance = basicLightbox.create(
-    `<img src="${e.target.dataset.source}" alt="${e.target.alt}">`
+    `<img src="${e.target.dataset.source}" alt="${e.target.alt}">`,
+    {
+      onShow: () => document.addEventListener("keydown", escapeBtnHandler),
+      onClose: () => document.removeEventListener("keydown", escapeBtnHandler),
+    }
   );
   instance.show();
 
-  escapeBtnHandler(instance);
-}
-
-function escapeBtnHandler(instance) {
-  if (instance.show()) {
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "Escape") {
-        instance.close();
-      }
-    });
-  } else if (instance.close()) {
-    document.removeEventListener();
+  function escapeBtnHandler(e) {
+    if (e.code === "Escape") {
+      instance.close();
+    }
   }
 }
